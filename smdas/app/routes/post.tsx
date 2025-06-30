@@ -1,3 +1,4 @@
+import {Form, redirect} from "react-router";
 import type { Route } from "./+types/post";
 
 export async function clientLoader({ params }: Route.LoaderArgs) {
@@ -6,8 +7,11 @@ export async function clientLoader({ params }: Route.LoaderArgs) {
     return await res.json()
 }
 
-export async function action() {
-    
+export async function clientAction({ params }: Route.LoaderArgs) {
+    await fetch(`https://jsonplaceholder.typicode.com/posts/${params.postId}`, {
+        method: "DELETE",
+    });
+    return redirect("/");
 }
 
 export default function Post({loaderData}: Route.ComponentProps) {
@@ -16,6 +20,9 @@ export default function Post({loaderData}: Route.ComponentProps) {
         {" "}
         <p> Title: {loaderData.title}</p>
         <p> Body: {loaderData.body}</p>
+        <Form method = "delete">
+            <button type = "submit"> Delete </button>
+        </Form>
     </div>
     );
 }
