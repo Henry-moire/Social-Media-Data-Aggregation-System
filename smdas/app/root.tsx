@@ -33,7 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="min-h-screen bg-gray-100">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -51,17 +51,14 @@ export default function App() {
             SMDAS
           </NavLink>
           <div className="space-x-4">
-            <NavLink to = "/login" className="text-gray-600">
-              {" "}
-              Login{" "}
+            <NavLink to = "/login" className={({ isActive }) => isActive ? "text-indigo-600" : "text-gray-600"}>
+              Login
             </NavLink>
-            <NavLink to = "/register" className="text-gray-600">
-              {" "}
-              Register{" "}
+            <NavLink to = "/register" className={({ isActive }) => isActive ? "text-indigo-600" : "text-gray-600"}>
+              Register
             </NavLink>
-            <NavLink to = "/profile" className="text-gray-600">
-              {" "}
-              Profile{" "}
+            <NavLink to = "/profile" className={({ isActive }) => isActive ? "text-indigo-600" : "text-gray-600"}>
+              Profile
             </NavLink>
           </div>
         </div>
