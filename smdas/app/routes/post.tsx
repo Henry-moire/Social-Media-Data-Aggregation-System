@@ -8,10 +8,14 @@ export async function clientLoader({ params }: Route.LoaderArgs) {
 }
 
 export async function clientAction({ params }: Route.LoaderArgs) {
-    await fetch(`https://jsonplaceholder.typicode.com/posts/${params.postId}`, {
-        method: "DELETE",
-    });
-    return redirect("/");
+    try {
+        await fetch(`https://jsonplaceholder.typicode.com/posts/${params.postId}`, {
+            method: "DELETE",
+        });
+        return { isDeleted: true };
+    } catch (err) {
+        return { isDeleted: false };
+    }
 }
 
 export default function Post({loaderData}: Route.ComponentProps) {
