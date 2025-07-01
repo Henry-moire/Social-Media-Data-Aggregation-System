@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
 
-export default function Dashboard() {
+export default function Register() {
     return <div>Welome to the dashboard!<Outlet /></div>
 };
