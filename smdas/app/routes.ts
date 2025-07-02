@@ -5,4 +5,5 @@ export default [
     route("login", "routes/login.tsx"),
     route("register", "routes/register.tsx"),
     route("profile", "routes/profile.tsx"),
+    route("auth/reddit/callback", "routes/reddit-callback.tsx"),
 ] satisfies RouteConfig;
