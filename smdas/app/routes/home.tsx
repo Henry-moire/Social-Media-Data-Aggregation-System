@@ -15,7 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   // Check if the user is already logged in
     const userId = await getUserId(request);
     if (!userId) {
-      //throw redirect("/login");
+      throw redirect("/login");
     } else {
       return { userId };
     }
