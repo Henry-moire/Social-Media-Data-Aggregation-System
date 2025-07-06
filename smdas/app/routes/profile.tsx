@@ -3,7 +3,7 @@ import React from "react";
 export default function RedditLogin() {
   const redditLogin = () => {
     const clientId = "Lk6um7BwdOhBaGQ2S1KoGQ";
-    const redirectUri = "http://localhost:3000/auth/reddit/callback";
+    const redirectUri = "http://localhost:5173/auth/reddit/callback";
     const scope = "identity history read";
     const state = crypto.randomUUID(); // Prevent CSRF attacks
 

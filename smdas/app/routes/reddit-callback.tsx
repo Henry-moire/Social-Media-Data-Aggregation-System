@@ -1,33 +1,26 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 
-// ✅ Required for React Router file-based routing
-export const loader = () => null;
-
-export const Component = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const [status, setStatus] = useState<string>("Starting Reddit OAuth...");
+export default function Reddit() {
+  const [status, setStatus] = useState("Waiting for Reddit response...");
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    const rawCode = searchParams.get("code");
+    const run = async () => {
+      // 👇 Only access location inside useEffect to avoid SSR errors
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      if (!code) {
+        setStatus("Missing code.");
+        return;
+      }
 
-    if (!rawCode) {
-      setStatus("Missing authorization code. Redirecting...");
-      setTimeout(() => navigate("/login"), 2000);
-      return;
-    }
-
-    const code = rawCode;
-
-    async function exchangeCodeForToken() {
       try {
-        setStatus("Contacting Reddit...");
+        setStatus("Exchanging code for token...");
 
         const response = await fetch("https://www.reddit.com/api/v1/access_token", {
           method: "POST",
           headers: {
-            Authorization: "Basic " + btoa("eOKPDGc0mPmPIyRsu0e44-toCDb_2g"), // replace these
+            Authorization: "Basic " + btoa("Lk6um7BwdOhBaGQ2S1KoGQ:eOKPDGc0mPmPIyRsu0e44-toCDb_2g"),
             "Content-Type": "application/x-www-form-urlencoded",
           },
           body: new URLSearchParams({
@@ -37,32 +30,47 @@ export const Component = () => {
           }),
         });
 
-        const text = await response.text();
-        console.log("Raw response from Reddit:", text);
-
-        const tokenData = JSON.parse(text);
+        const tokenData = await response.json();
+        console.log("Token response:", tokenData);
 
         if (tokenData.error) {
-          console.error("OAuth error:", tokenData);
-          setStatus("OAuth error: " + tokenData.error);
+          setStatus("Token exchange failed: " + tokenData.error);
           return;
         }
 
-        setStatus("Login successful! Redirecting...");
-        setTimeout(() => navigate("/profile"), 2000);
-      } catch (err) {
-        console.error("Token request failed:", err);
-        setStatus("Failed to reach Reddit. Try again.");
-      }
-    }
+        setStatus("Token received. Fetching Reddit profile...");
 
-    exchangeCodeForToken();
+        const userRes = await fetch("https://oauth.reddit.com/api/v1/me", {
+          headers: {
+            Authorization: `bearer ${tokenData.access_token}`,
+            "User-Agent": "your-app-name by u/yourusername",
+          },
+        });
+
+        const userData = await userRes.json();
+        console.log("Reddit user data:", userData);
+        setProfile(userData);
+        setStatus("Fetched profile successfully!");
+      } catch (err) {
+        console.error("Error:", err);
+        setStatus("Something went wrong.");
+      }
+    };
+
+    run();
   }, []);
 
   return (
-    <div style={{ padding: "2rem", color: "#fff", background: "#1a1a1a", fontFamily: "sans-serif" }}>
-      <h1>Reddit OAuth Login</h1>
+    <div style={{ padding: "2rem", color: "white", background: "black" }}>
+      <h1>Reddit OAuth Callback</h1>
       <p>{status}</p>
+      {profile && (
+        <div style={{ marginTop: "1rem" }}>
+          <p><strong>Username:</strong> {profile.name}</p>
+          <p><strong>Karma:</strong> {profile.total_karma}</p>
+          <p><strong>Created:</strong> {new Date(profile.created_utc * 1000).toDateString()}</p>
+        </div>
+      )}
     </div>
   );
-};
+}
