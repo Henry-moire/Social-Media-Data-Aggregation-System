@@ -7,4 +7,5 @@ export default [
     route("logout", "routes/logout.tsx"),
     route("profile", "routes/profile.tsx"),
     route("auth/reddit/callback", "routes/reddit-callback.tsx"),
+    route("auth/github/callback", "routes/github-callback.tsx"),
 ] satisfies RouteConfig;
