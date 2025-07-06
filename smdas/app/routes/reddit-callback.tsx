@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "~/supabase-client";
+import type { Route } from "./+types/reddit-callback";
 
 export default function Reddit() {
   const [status, setStatus] = useState("Waiting for Reddit response...");
@@ -54,8 +55,9 @@ export default function Reddit() {
         console.log("Reddit user data:", userData);
         setProfile(userData);
         setStatus("Fetched profile successfully!");
+        
         await supabase.from("RedditStats").insert([{
-          user_id: userData.id, // or use your own internal user ID
+          reddit_id: userData.id, // or use your own internal user ID
           total_karma: userData.total_karma,
           link_karma: userData.link_karma,
           comment_karma: userData.comment_karma,
@@ -63,8 +65,8 @@ export default function Reddit() {
         const { data, error } = await supabase
           .from("RedditStats")
           .select("*")
-          .eq("user_id", userData.id)
-          .order("created_at", { ascending: false });
+          .eq("reddit_id", userData.id)
+          .order("date", { ascending: false });
 
         if (error) {
           console.error("Error fetching stats:", error);
