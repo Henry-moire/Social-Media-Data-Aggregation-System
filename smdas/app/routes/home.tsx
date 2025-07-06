@@ -13,23 +13,23 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ request }: Route.LoaderArgs) {
   // Check if the user is already logged in
-  const userId = await getUserId(request);
-  if (!userId) {
-    throw redirect("/login");
-  } else {
-    return { userId };
-  }
+    const userId = await getUserId(request);
+    if (!userId) {
+      //throw redirect("/login");
+    } else {
+      return { userId };
+    }
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <div className="p-8">
-      <h1 className="text-2xl">Welcome to React Router v7 Auth</h1>
+      <h1 className="text-2xl">Welcome to the Socail Media Data Aggregation System</h1>
       <div className="mt-6">
         {loaderData?.userId ? (
           <div>
             <p className="mb-6">You are logged in {loaderData?.userId}</p>
-            <Form action="/profile" method="post">
+            <Form action="/logout" method="post">
               <button type="submit" className="border rounded px-2.5 py-1">
                 Logout
               </button>
