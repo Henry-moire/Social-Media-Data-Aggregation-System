@@ -26,11 +26,6 @@ export async function action({ request }: Route.ActionArgs) {
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
 
-    // Check the user's credentials
-    // if (email !== "aaron@mail.com" || password !== "password") {
-    //   throw new Error("Invalid email or password");
-    // }
-
     // Query the Users table for a matching user
     const { data: users, error: fetchError } = await supabase
       .from("Users")
@@ -54,7 +49,9 @@ export async function action({ request }: Route.ActionArgs) {
       request,
       userId: user.id, // or user.email if you're not using UUIDs
       remember: true,
+      name: user.name,
     });
+    console.log("The name is " + user.name);
 
 
     if (!response) {
@@ -73,29 +70,46 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Login({ actionData }: Route.ComponentProps) {
   return (
-    <div className="p-8 min-w-3/4 w-96">
-      <h1 className="text-2xl">Login</h1>
-      <Form method="post" className="mt-6 ">
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-row">
-            <label className="min-w-24 ">Username:</label>
-            <input className="flex-1" type="text" name="email" />
-          </div>
-          <div className="flex flex-row">
-            <label className="min-w-24 ">Password:</label>
-            <input className="flex-1" type="password" name="password" />
-          </div>
-          <div className="flex flex-row-reverse mt-4">
-            <button type="submit" className="border rounded px-2.5 py-1 w-32">
-              Login
-            </button>
-          </div>
-          {actionData?.error ? (
-            <div className="flex flex-row">
-              <p className="text-red-600 mt-4 ">{actionData?.error}</p>
-            </div>
-          ) : null}
+    <div className="max-w-md mx-auto mt-12 bg-white shadow-md rounded px-8 py-6">
+      <h2 className="text-2xl font-bold mb-6 text-center text-indigo-600">Login</h2>
+
+      {actionData?.error && (
+        <div className="mb-4 text-red-600 bg-red-100 border border-red-300 p-2 rounded">
+          {actionData.error}
         </div>
+      )}
+
+      <Form method="post" className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            name="email"
+            type="email"
+            required
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            name="password"
+            type="password"
+            required
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition"
+        >
+          Login
+        </button>
       </Form>
     </div>
   );

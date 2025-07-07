@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const clientId = "Ov23lig3VR6qIJEj8i7D";
-  const clientSecret = "4f2205ff362d7ab3fe086e279f51a306b06da466";
+  const clientSecret = "bb3994be5cc0d20a7a4aa2ef52d5a17be56b6646";
 
   const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",

@@ -10,7 +10,7 @@ type User = { id: string; username: string; password: string };
  * @see https://reactrouter.com/en/dev/utils/create-cookie-session-storage
  */
 export const sessionStorage = createCookieSessionStorage({
-  cookie: {
+  cookie: { 
     name: "__session",
     secrets: ["s3cret"],
     sameSite: "lax",
@@ -47,6 +47,7 @@ export async function logout(request: Request) {
 }
 
 const USER_SESSION_KEY = "userId";
+const USER_NAME_KEY = "name";
 
 /**
  * Retrieves the user ID from the session.
@@ -60,6 +61,22 @@ export async function getUserId(
   const userId = session.get(USER_SESSION_KEY);
   return userId;
 }
+
+export async function getUserName(
+  request: Request
+): Promise<string | undefined> {
+  const session = await sessionStorage.getSession(
+    request.headers.get("Cookie")
+  );
+
+  const userName = session.get(USER_NAME_KEY);
+
+  console.log("Retrieved userName from session:", userName);
+  //console.log("Full session contents:", Object.fromEntries(session.entries()));
+
+  return typeof userName === "string" ? userName : undefined;
+}
+
 
 /**
  * Creates a new user session.
@@ -75,14 +92,18 @@ export async function createUserSession({
   userId,
   remember = true,
   redirectUrl,
+  name,
 }: {
   request: Request;
   userId: string;
   remember: boolean;
   redirectUrl?: string;
+  name?: string;
 }) {
   const session = await getUserSession(request);
   session.set(USER_SESSION_KEY, userId);
+  session.set("name", name);
+
   return redirect(redirectUrl || "/", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
